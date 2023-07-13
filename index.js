@@ -9,15 +9,15 @@ module.exports = function (ip) {
   this.baseurl = "http://" + this.ip + ":" + this.port + "/api/v1/device/";
 
   //syntax sugar for diplay mode
-  this.blackout = function () {
-    console.log(ip);
+  this.blackout = function (cb) {
     console.log("blackout the screen");
+    this.displaymode(1, cb);
   };
 
   //syntax sugar for diplay mode
-  this.blackout = function () {
-    console.log(ip);
+  this.normal = function (cb) {
     console.log("normal the screen");
+    this.displaymode(0, cb);
   };
 
   // can also take a list of cabinet ids
@@ -28,7 +28,7 @@ module.exports = function (ip) {
   };
 
   // PUT /api/v1/device/screen/displaymode
-  this.displaymode = function (value, cb, err) {
+  this.displaymode = function (value, cb) {
     // 0 = normal
     // 1 = blackout
     // 2 = freeze?
