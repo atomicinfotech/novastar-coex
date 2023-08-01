@@ -15,7 +15,7 @@ const novastar = new Novastar("10.9.10.54");
 
 // novastar.gamma(.5);
 // novastar.gamma(1);
-novastar.gamma(2.5);
+// novastar.gamma(2.5);
 // novastar.gamma(4);
 // novastar.gamma(40, 2);
 // novastar.gamma("2g");
@@ -82,6 +82,7 @@ novastar.gamma(2.5);
 // const novastar2 = new Novastar("172.16.1.1");
 // novastar2.brightness(50);
 
-// {
-// 	"value": 0
-// }
+
+// novastar.testpattern("red");
+
+novastar.testpattern("blue");

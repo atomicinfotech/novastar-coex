@@ -58,7 +58,6 @@ module.exports = function (ip) {
   // colortemp 1700 to 15000
   // [optional] array of cabinetids
   // [optional] callback function
-
   // PUT /api/v1/device/cabinet/colortemperature
   this.colortemperature = function (value, cabinetids, cb) {
     //if no cabinet value is provided send 16777215 which will adjust all
@@ -91,8 +90,8 @@ module.exports = function (ip) {
       idList: cabinetids,
     };
 
-    console.log(url);
-    console.log(payload);
+    // console.log(url);
+    // console.log(payload);
 
     axios
       .put(url, payload)
@@ -144,8 +143,8 @@ module.exports = function (ip) {
       idList: cabinetids,
     };
 
-    console.log(url);
-    console.log(payload);
+    // console.log(url);
+    // console.log(payload);
 
     axios
       .put(url, payload)
@@ -390,7 +389,149 @@ module.exports = function (ip) {
       });
   };
 
-  //connect and cache data
+  // Adjust test pattern
+  // mode
+    // 0: Pure color (the color is controlled by the red, green and blue component values below)
+    // 16: Horizontal stripes to the bottom
+    // 17: Horizontal stripes to the right
+    // 18: Slashes
+    // 19: Backslashes
+    // 20: Grid to the bottom right
+    // 21: Grid to the right
+    // 32: Left-to-right red gradient
+    // 33: Left-to-right green gradient
+    // 34: Left-to-right blue gradient
+    // 35: Left-to-right gray gradient
+    // 36: Top-to-bottom red gradient
+    // 37: Top-to-bottom green gradient
+    // 38: Top-to-bottom blue gradient
+    // 39: Top-to-bottom gray gradient
+    // 48: Lightning
+  // parameters
+    // {
+    //   red: 0-4095,
+    //   green: 0-4095,
+    //   blue: 0-4095,
+    //   gray: 0-4095,
+    //   gridWidth: 1,
+    //   moveSpeed: 0-100,
+    //   gradientStretch : 1-20,
+    //   state : 0-1
+    // }
+  // [optional] callback function
+  // PUT /api/v1/device/screen/controller/pattern/test
+  this.testpattern = function (value, params, cb) {
 
-  console.log("okay lets set this up now");
+    switch (value) {
+      case "white":
+        var mode = 0;
+        params = {
+          red: 4095,
+          green: 4095,
+          blue: 4095,
+          gray: 4095,
+        };
+        break;
+      case "black":
+        var mode = 0;
+        params = {
+          red: 0,
+          green: 0,
+          blue: 0,
+          gray: 0,
+        };
+        break;
+      case "red":
+        var mode = 0;
+        params = {
+          red: 255,
+          green: 0,
+          blue: 0,
+          gray: 0,
+          gridWidth: 16,
+          moveSpeed: 0,
+          gradientStretch: 1,
+          state: 1,
+        };
+        break;
+      case "green":
+        var mode = 0;
+        params = {
+          red: 0,
+          green: 4095,
+          blue: 0,
+          gray: 0,
+        };
+        break;
+      case "blue":
+        var mode = 0;
+        params = {
+          red: 0,
+          green: 0,
+          blue: 4095,
+          gray: 0
+        };
+        break;
+      case 0:
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+      case 20:
+      case 21:
+      case 32:
+      case 33:
+      case 34:
+      case 35:
+      case 36:
+      case 37:
+      case 38:
+      case 39:
+      case 48:
+        //check params
+
+        if(!params) {
+          params = {
+            red: 255,
+            green: 255,
+            blue: 255,
+            gray: 0,
+            gridWidth: 16,
+            moveSpeed: 0,
+            gradientStretch: 1,
+            state: 1
+          }
+        }
+
+        mode = value;
+        break;
+      default:
+        if (typeof cb == "function") {
+          return cb(null, "Invalid mode");
+        }
+        return false;
+        break;
+    }
+
+
+    var url = this.baseurl + "screen/controller/pattern/test";
+    var payload = {
+      mode: mode
+    };
+
+    if (params) payload.parameters = params;
+
+    console.log(url);
+    console.log(payload);
+
+    axios
+      .put(url, payload)
+      .then(function (response) {
+        if (typeof cb == "function") return cb(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (typeof cb == "function") return cb(null, false);
+      });
+  };
 };
