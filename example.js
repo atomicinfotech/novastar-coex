@@ -13,8 +13,18 @@ const novastar = new Novastar("10.9.10.54");
 //novastar.blackout();
 //novastar.freeze();
 
+// novastar.gamma(.5);
+// novastar.gamma(1);
+novastar.gamma(2.5);
+// novastar.gamma(4);
+// novastar.gamma(40, 2);
+// novastar.gamma("2g");
+// novastar.gamma();
 
-novastar.colortemperature(5000);
+// novastar.colortemperature(5000);
+// novastar.colortemperature("1800K");
+// novastar.colortemperature(20000);
+// novastar.colortemperature(1000);
 
 
 // novastar.cabinet(function (response) {

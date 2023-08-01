@@ -24,50 +24,18 @@ module.exports = function (ip) {
     this.displaymode(2, cb);
   };
 
-
-
   // can also take a list of cabinet ids
   // PUT /api/v1/device/cabinet/brightness
   this.brightness = function (brightness, cabinetids) {
     //if no cabinet value is provided send 16777215 which will adjust all
-    if(!cabinetids) cabinetids = [ 16777215 ];
+    if (!cabinetids) cabinetids = [16777215];
 
-    if(brightness > 1) brightness = brightness / 100;  // most likely is a percentage
+    if (brightness > 1) brightness = brightness / 100; // most likely is a percentage
     console.log("adjust brightness of the screen ", brightness);
 
     var url = this.baseurl + "cabinet/brightness";
     var payload = {
-      ratio : brightness,
-      idList : cabinetids
-    }
-
-    // console.log(url);
-    // console.log(payload);
-
-    axios
-      .put(url, payload)
-      .then(function (response) {
-        if (typeof cb == "function") return cb(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-        if (typeof cb == "function") return cb(false);
-      });
-
-  };
-
-
-  this.colortemperature = function (colortemp, cabinetids) {
-    //if no cabinet value is provided send 16777215 which will adjust all
-    if (!cabinetids) cabinetids = [16777215];
-
-    //check and see if colortemp has a "K on the end", and check is in the range of 1700-15000
-
-    console.log("adjust color temperature ", colortemp);
-
-    var url = this.baseurl + "cabinet/colortemperature";
-    var payload = {
-      value: colortemp,
+      ratio: brightness,
       idList: cabinetids,
     };
 
@@ -85,7 +53,111 @@ module.exports = function (ip) {
       });
   };
 
-  
+  // Adjust color temperature
+  // can also take a list of cabinet ids
+  // colortemp 1700 to 15000
+  // [optional] array of cabinetids
+  // [optional] callback function
+
+  // PUT /api/v1/device/cabinet/colortemperature
+  this.colortemperature = function (value, cabinetids, cb) {
+    //if no cabinet value is provided send 16777215 which will adjust all
+    if (!cabinetids) cabinetids = [16777215];
+
+    //check if is in the range of 1700-15000
+    if (typeof value === "string") {
+      value = parseFloat(value.replace(/[^\d.-]/g, ""));
+    } //strip out extra chars
+
+    if (value < 1700) {
+      value = 1700;
+    } else if (value > 15000) {
+      value = 15000;
+    }
+
+    if (!value) {
+      console.log("Color temperature value is required");
+      if (typeof cb == "function") {
+        return cb(null, "Color temperature value is required");
+      }
+      return false;
+    }
+
+    console.log("Adjust color temperature ", value);
+
+    var url = this.baseurl + "cabinet/colortemperature";
+    var payload = {
+      value: value,
+      idList: cabinetids,
+    };
+
+    console.log(url);
+    console.log(payload);
+
+    axios
+      .put(url, payload)
+      .then(function (response) {
+        if (typeof cb == "function") return cb(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (typeof cb == "function") return cb(false);
+      });
+  };
+
+  // Adjust color temperature
+  // gamma 1.0 to 4.0
+  // [optional] type 0 = red, 1 = blue, 2 = green, 3 = all.  Default = 3
+  // [optional] array of cabinetids
+  // [optional] callback function
+  // PUT /api/v1/device/cabinet/colortemperature
+  this.gamma = function (value, type, cabinetids, cb) {
+    //if no cabinet value is provided send 16777215 which will adjust all
+    if (!cabinetids) cabinetids = [16777215];
+
+    //check if gamma is in the range of 1-4.
+    if (typeof value === "string") {
+      console.log("string");
+      value = parseFloat(value.replace(/[^\d.-]/g, ""));
+    } //strip out extra chars
+
+    if (value < 1) {
+      value = 1;
+    } else if (value > 4) {
+      value = 4;
+    }
+
+    if (!value) {
+      console.log("Gamma value is required");
+      if (typeof cb == "function") {
+        return cb(null, "Gamma value is required");
+      }
+      return false;
+    }
+
+    if (!type) type = 3; // all
+
+    var url = this.baseurl + "cabinet/gamma";
+    var payload = {
+      value: value,
+      type: type,
+      idList: cabinetids,
+    };
+
+    console.log(url);
+    console.log(payload);
+
+    axios
+      .put(url, payload)
+      .then(function (response) {
+        if (typeof cb == "function") return cb(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (typeof cb == "function") return cb(null, false);
+      });
+  };
+
   // PUT /api/v1/device/screen/displaymode
   this.displaymode = function (value, cb) {
     // 0 = normal
@@ -99,7 +171,7 @@ module.exports = function (ip) {
     //console.log(url);
 
     axios
-      .put(url, { value : value })
+      .put(url, { value: value })
       .then(function (response) {
         if (typeof cb == "function") return cb(response);
       })
@@ -129,10 +201,8 @@ module.exports = function (ip) {
       });
   };
 
-
   //Summary of everything
   this.summary = function (cb) {
-
     //cabinets, sources
 
     this.cabinet(function (cabinets) {
@@ -167,10 +237,9 @@ module.exports = function (ip) {
   //set input
   // PUT /api/v1/device/screen/input
   this.input = function (input, cb) {
-
     var baseurl = this.baseurl;
 
-    this.sources(function(sources) {
+    this.sources(function (sources) {
       var lookup = {};
 
       _.each(sources, function (source) {
@@ -189,25 +258,21 @@ module.exports = function (ip) {
       }
 
       var url = baseurl + "screen/input";
-      var payload =  { groupId: groupId };
+      var payload = { groupId: groupId };
 
       axios
         .put(url, payload)
         .then(function (response) {
-          var data = { input : input, groupId : groupId}
+          var data = { input: input, groupId: groupId };
           console.log(data);
 
           if (typeof cb == "function") return cb(data);
         })
         .catch(function (error) {
-         console.log(error);
+          console.log(error);
           if (typeof cb == "function") return cb(false, error);
         });
-
-
     });
-
-    
   };
 
   //GET /api/v1/device/preset
@@ -226,7 +291,6 @@ module.exports = function (ip) {
       });
   };
 
-  
   //PUT /api/v1/device/currentpreset
   this.preset = function (preset, cb) {
     console.log(ip);
@@ -267,8 +331,6 @@ module.exports = function (ip) {
           if (typeof cb == "function") return cb(false, error);
         });
     });
-
-
   };
 
   //get/set HDR per input
@@ -308,7 +370,6 @@ module.exports = function (ip) {
     console.log("adjust colorspace", value);
   };
 
-
   //Working Mode
   //PUT /api/v1/device/hw/mode
   this.workingmode = function (value, cb) {
@@ -329,9 +390,7 @@ module.exports = function (ip) {
       });
   };
 
-
   //connect and cache data
 
   console.log("okay lets set this up now");
-
 };
