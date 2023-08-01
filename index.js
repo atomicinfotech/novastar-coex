@@ -281,8 +281,26 @@ module.exports = function (ip) {
 
   //Working Mode
   //PUT /api/v1/device/hw/mode
-  // 2 : Send Only
-  // 3 : All-in-one
+  this.workingmode = function (value, cb) {
+    // 2 : Send Only
+    // 3 : All-in-one
+
+    console.log(ip);
+
+    console.log("adjust working mode of the controller", value);
+    var url = this.baseurl + "hw/mode";
+
+    //console.log(url);
+    axios
+      .put(url, { value: value })
+      .then(function (response) {
+        if (typeof cb == "function") return cb(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (typeof cb == "function") return cb(null, error);
+      });
+  };
 
 
   //connect and cache data

@@ -22,9 +22,9 @@ novastar.blackout();
 //   console.log(sources);
 // });
 
-// novastar.input("DP1.2", function (response, error) {
-//   console.log(response);
-// });
+novastar.input("DP1.2", function (response, error) {
+  console.log(response);
+});
 
 // novastar.input("12G-SDI", function (response, error) {
 //   console.log(response);
@@ -35,26 +35,28 @@ novastar.blackout();
 //   console.log(response);
 // });
 
-
-
-novastar.presets(function (presets) {
-  console.log(presets);
-});
+// novastar.presets(function (presets) {
+//   console.log(presets);
+// });
 
 // novastar.preset('DnD Shoot', function (response) {
 //   console.log(response);
 // });
 
-novastar.preset(11, function (response) {
-  console.log(response);
-});
+// novastar.preset(11, function (response) {
+//   console.log(response);
+// });
+
+
+// novastar.workingmode(2, function (response) {
+//   console.log(response);
+// });
 
 
 
 // novastar.presets(function (presets) {
 //   console.log(presets);
 // });
-
 
 // novastar.summary(function (response) {
 //   console.log(response);
