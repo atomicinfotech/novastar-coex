@@ -10,8 +10,11 @@ const novastar = new Novastar("10.9.10.54");
 //novastar.displaymode(0);
 
 //novastar.normal();
-novastar.blackout();
+//novastar.blackout();
 //novastar.freeze();
+
+
+novastar.colortemperature(5000);
 
 
 // novastar.cabinet(function (response) {
@@ -22,9 +25,9 @@ novastar.blackout();
 //   console.log(sources);
 // });
 
-novastar.input("DP1.2", function (response, error) {
-  console.log(response);
-});
+// novastar.input("DP1.2", function (response, error) {
+//   console.log(response);
+// });
 
 // novastar.input("12G-SDI", function (response, error) {
 //   console.log(response);
@@ -49,6 +52,10 @@ novastar.input("DP1.2", function (response, error) {
 
 
 // novastar.workingmode(2, function (response) {
+//   console.log(response);
+// });
+
+// novastar.workingmode(3, function (response) {
 //   console.log(response);
 // });
 

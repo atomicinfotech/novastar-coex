@@ -33,7 +33,7 @@ module.exports = function (ip) {
     if(!cabinetids) cabinetids = [ 16777215 ];
 
     if(brightness > 1) brightness = brightness / 100;  // most likely is a percentage
-    console.log("adjust brightness of the screen", brightness);
+    console.log("adjust brightness of the screen ", brightness);
 
     var url = this.baseurl + "cabinet/brightness";
     var payload = {
@@ -56,6 +56,36 @@ module.exports = function (ip) {
 
   };
 
+
+  this.colortemperature = function (colortemp, cabinetids) {
+    //if no cabinet value is provided send 16777215 which will adjust all
+    if (!cabinetids) cabinetids = [16777215];
+
+    //check and see if colortemp has a "K on the end", and check is in the range of 1700-15000
+
+    console.log("adjust color temperature ", colortemp);
+
+    var url = this.baseurl + "cabinet/colortemperature";
+    var payload = {
+      value: colortemp,
+      idList: cabinetids,
+    };
+
+    // console.log(url);
+    // console.log(payload);
+
+    axios
+      .put(url, payload)
+      .then(function (response) {
+        if (typeof cb == "function") return cb(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (typeof cb == "function") return cb(false);
+      });
+  };
+
+  
   // PUT /api/v1/device/screen/displaymode
   this.displaymode = function (value, cb) {
     // 0 = normal
@@ -284,9 +314,6 @@ module.exports = function (ip) {
   this.workingmode = function (value, cb) {
     // 2 : Send Only
     // 3 : All-in-one
-
-    console.log(ip);
-
     console.log("adjust working mode of the controller", value);
     var url = this.baseurl + "hw/mode";
 
