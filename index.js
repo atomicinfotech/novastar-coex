@@ -28,13 +28,32 @@ module.exports = function (ip) {
 
   // can also take a list of cabinet ids
   // PUT /api/v1/device/cabinet/brightness
-  this.brightness = function (value) {
-    //if no cabinet value is provided send 16777215 which will adjust all cabs.
+  this.brightness = function (brightness, cabinetids) {
+    //if no cabinet value is provided send 16777215 which will adjust all
+    if(!cabinetids) cabinetids = [ 16777215 ];
 
-    console.log(ip);
-    console.log("adjust brightness of the screen", value);
+    if(brightness > 1) brightness = brightness / 100;  // most likely is a percentage
+    console.log("adjust brightness of the screen", brightness);
 
-    
+    var url = this.baseurl + "cabinet/brightness";
+    var payload = {
+      ratio : brightness,
+      idList : cabinetids
+    }
+
+    // console.log(url);
+    // console.log(payload);
+
+    axios
+      .put(url, payload)
+      .then(function (response) {
+        if (typeof cb == "function") return cb(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (typeof cb == "function") return cb(false);
+      });
+
   };
 
   // PUT /api/v1/device/screen/displaymode
