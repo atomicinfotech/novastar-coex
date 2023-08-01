@@ -3,26 +3,33 @@ const axios = require("axios");
 
 module.exports = function (ip) {
   this.ip = ip;
-
   this.port = 8001;
-
+  this.debug = false;
   this.baseurl = "http://" + this.ip + ":" + this.port + "/api/v1/device/";
 
-  //syntax sugar for diplay mode
+  //syntax sugar for diplay modes
   this.blackout = function (cb) {
     console.log("blackout the screen");
     this.displaymode(1, cb);
   };
 
-  //syntax sugar for diplay mode
   this.normal = function (cb) {
     console.log("normal the screen");
     this.displaymode(0, cb);
   };
 
+  this.freeze = function (cb) {
+    console.log("freeze the screen");
+    this.displaymode(2, cb);
+  };
+
+
+
   // can also take a list of cabinet ids
   // PUT /api/v1/device/cabinet/brightness
   this.brightness = function (value) {
+    //if no cabinet value is provided send 16777215 which will adjust all cabs.
+
     console.log(ip);
     console.log("adjust brightness of the screen", value);
   };
@@ -37,10 +44,10 @@ module.exports = function (ip) {
     console.log("adjust display mode of the screen", value);
     var url = this.baseurl + "screen/displaymode";
 
-    console.log(url);
+    //console.log(url);
 
     axios
-      .put(url, { value: 0 })
+      .put(url, { value : value })
       .then(function (response) {
         if (typeof cb == "function") return cb(response);
       })
@@ -105,7 +112,24 @@ module.exports = function (ip) {
 
   //set input
   // PUT /api/v1/device/screen/input
-  this.inputs = function (cb) {
+  this.input = function (input, cb) {
+
+    this.sources(function(sources) {
+
+      // _.find(sources, function()
+      // //get list of valid groupIds
+      // //get list of valid names
+      // var names = _.map(sources, function(source) {
+        
+      // });
+
+
+
+
+    });
+    //input in format of groupID or the name
+    //if no input, returns the current input
+
     var url = this.baseurl + "screen/input";
     axios
       .get(url, { value: 0 })
