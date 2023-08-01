@@ -2,23 +2,59 @@ const Novastar = require("./index");
 
 const novastar = new Novastar("10.9.10.54");
 
-//novastar.brightness(100);
+// novastar.brightness(50);
+//novastar.brightness(10);
+//novastar.brightness(.25);
+// novastar.brightness(0);
 
 //novastar.displaymode(0);
 
-//novastar.blackout();
+//novastar.normal();
+novastar.blackout();
+//novastar.freeze();
+
 
 // novastar.cabinet(function (response) {
 //   //console.log(response);
 // });
 
-novastar.sources(function (sources) {
-  console.log(sources);
+// novastar.sources(function (sources) {
+//   console.log(sources);
+// });
+
+// novastar.input("DP1.2", function (response, error) {
+//   console.log(response);
+// });
+
+// novastar.input("12G-SDI", function (response, error) {
+//   console.log(response);
+// });
+
+// novastar.input("Random Input", function (response, error) {
+//   if(error) return console.log("Error: ", error);
+//   console.log(response);
+// });
+
+
+
+novastar.presets(function (presets) {
+  console.log(presets);
 });
 
-// novastar.sources(function (inputs) {
-//   console.log(inputs);
+// novastar.preset('DnD Shoot', function (response) {
+//   console.log(response);
 // });
+
+novastar.preset(11, function (response) {
+  console.log(response);
+});
+
+
+
+// novastar.presets(function (presets) {
+//   console.log(presets);
+// });
+
 
 // novastar.summary(function (response) {
 //   console.log(response);

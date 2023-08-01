@@ -118,7 +118,7 @@ module.exports = function (ip) {
     axios
       .get(url, { value: 0 })
       .then(function (response) {
-        data = _.get(response, "data.data");
+        var data = _.get(response, "data.data");
 
         data = _.map(data, function (d) {
           d.supportFrameRate = _.split(d.supportFrameRate, "|");
@@ -181,15 +181,64 @@ module.exports = function (ip) {
   };
 
   //GET /api/v1/device/preset
-  this.presets = function () {
-    console.log(ip);
-    console.log("Get list of presets", value);
+  this.presets = function (cb) {
+    var url = this.baseurl + "preset";
+    axios
+      .get(url)
+      .then(function (response) {
+        data = _.get(response, "data.data");
+
+        if (typeof cb == "function") return cb(data);
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (typeof cb == "function") return cb(false);
+      });
   };
 
+  
   //PUT /api/v1/device/currentpreset
-  this.preset = function () {
+  this.preset = function (preset, cb) {
     console.log(ip);
-    console.log("select preset", value);
+    console.log("select preset", preset);
+
+    var baseurl = this.baseurl;
+
+    this.presets(function (presets) {
+      var lookup = {};
+
+      _.each(presets, function (preset) {
+        lookup[preset.name] = preset.sequenceNumber;
+        lookup[preset.sequenceNumber] = preset.sequenceNumber;
+      });
+
+      console.log(lookup);
+
+      var sequenceNumber = null;
+      sequenceNumber = lookup[preset];
+
+      if (!sequenceNumber) {
+        if (typeof cb == "function") return cb(null, "Unknown preset");
+        return;
+      }
+
+      var url = baseurl + "currentpreset";
+      var payload = { sequenceNumber: sequenceNumber };
+
+      axios
+        .put(url, payload)
+        .then(function (response) {
+          var data = _.get(response, "data.data");
+
+          if (typeof cb == "function") return cb(data);
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (typeof cb == "function") return cb(false, error);
+        });
+    });
+
+
   };
 
   //get/set HDR per input
@@ -228,6 +277,12 @@ module.exports = function (ip) {
     console.log(ip);
     console.log("adjust colorspace", value);
   };
+
+
+  //Working Mode
+  //PUT /api/v1/device/hw/mode
+  // 2 : Send Only
+  // 3 : All-in-one
 
 
   //connect and cache data
