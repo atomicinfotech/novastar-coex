@@ -6,6 +6,7 @@ module.exports = function (ip) {
   this.port = 8001;
   this.debug = false;
   this.baseurl = "http://" + this.ip + ":" + this.port + "/api/v1/device/";
+  this.cache = {};
 
   //syntax sugar for diplay modes
   this.blackout = function (cb) {
@@ -32,6 +33,8 @@ module.exports = function (ip) {
 
     console.log(ip);
     console.log("adjust brightness of the screen", value);
+
+    
   };
 
   // PUT /api/v1/device/screen/displaymode
@@ -77,13 +80,15 @@ module.exports = function (ip) {
       });
   };
 
-  //connect and cache data
 
   //Summary of everything
   this.summary = function (cb) {
+
+    //cabinets, sources
+
     this.cabinet(function (cabinets) {
       console.log(cabinets.length);
-      console.log("yo");
+      //console.log("yo");
     });
   };
 
@@ -114,59 +119,65 @@ module.exports = function (ip) {
   // PUT /api/v1/device/screen/input
   this.input = function (input, cb) {
 
+    var baseurl = this.baseurl;
+
     this.sources(function(sources) {
+      var lookup = {};
 
-      // _.find(sources, function()
-      // //get list of valid groupIds
-      // //get list of valid names
-      // var names = _.map(sources, function(source) {
-        
-      // });
+      _.each(sources, function (source) {
+        lookup[source.name] = source.groupId;
+        lookup[source.groupId] = source.groupId;
+      });
 
+      console.log(lookup);
 
+      var groupId = null;
+      groupId = lookup[input];
+
+      if (!groupId) {
+        if (typeof cb == "function") return cb(null, "Unknown input");
+        return;
+      }
+
+      var url = baseurl + "screen/input";
+      var payload =  { groupId: groupId };
+
+      axios
+        .put(url, payload)
+        .then(function (response) {
+          var data = { input : input, groupId : groupId}
+          console.log(data);
+
+          if (typeof cb == "function") return cb(data);
+        })
+        .catch(function (error) {
+         console.log(error);
+          if (typeof cb == "function") return cb(false, error);
+        });
 
 
     });
-    //input in format of groupID or the name
-    //if no input, returns the current input
 
-    var url = this.baseurl + "screen/input";
-    axios
-      .get(url, { value: 0 })
-      .then(function (response) {
-        data = _.get(response, "data.data");
-
-        //  data = _.map(data, function (d) {
-        //    d.supportFrameRate = _.split(d.supportFrameRate, "|");
-        //    d.supportResolution = _.split(d.supportResolution, "|");
-        //    return d;
-        //  });
-
-        if (typeof cb == "function") return cb(data);
-      })
-      .catch(function (error) {
-        console.log(error);
-        if (typeof cb == "function") return cb(false);
-      });
+    
   };
 
   //GET /api/v1/device/preset
   this.presets = function () {
     console.log(ip);
-    console.log("adjust display mode of the screen", value);
+    console.log("Get list of presets", value);
   };
 
   //PUT /api/v1/device/currentpreset
   this.preset = function () {
     console.log(ip);
-    console.log("adjust display mode of the screen", value);
+    console.log("select preset", value);
   };
 
   //get/set HDR per input
   //PUT api/v1/device/input/{id}/hdrmode
   this.hdr = function (input, hdr) {
     console.log(ip);
-    console.log("adjust display mode of the screen", value);
+    console.log("adjust display HDR of the screen", value);
   };
 
   //set dynamic boost
@@ -174,9 +185,9 @@ module.exports = function (ip) {
   // PUT api/v1/device/processing/imagequality/ede/enable
   // PUT /api/v1/device/processing/imagequality/abl/enable
   // PUT /api/v1/device/processing/imagequality/itmo/enable
-  this.hdr = function (input, hdr) {
+  this.dynamicboost = function (input, hdr) {
     console.log(ip);
-    console.log("adjust display mode of the screen", value);
+    console.log("adjust dynamic boost", value);
   };
 
   //Color Space
@@ -194,8 +205,14 @@ module.exports = function (ip) {
 	Custom:"Custom"
   */
 
-  this.hdr = function (input, hdr) {
+  this.colorspace = function (input, hdr) {
     console.log(ip);
-    console.log("adjust display mode of the screen", value);
+    console.log("adjust colorspace", value);
   };
+
+
+  //connect and cache data
+
+  console.log("okay lets set this up now");
+
 };
