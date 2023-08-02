@@ -28,7 +28,7 @@ const novastar = new Novastar("10.9.10.54");
 
 
 // novastar.cabinet(function (response) {
-//   //console.log(response);
+//   console.log(response);
 // });
 
 // novastar.sources(function (sources) {
@@ -83,6 +83,5 @@ const novastar = new Novastar("10.9.10.54");
 // novastar2.brightness(50);
 
 
-// novastar.testpattern("red");
+// novastar.testpattern(35);
 
-novastar.testpattern("blue");
