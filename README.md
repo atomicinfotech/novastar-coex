@@ -7,7 +7,7 @@ A javascript library for control of NovaStar COEX video wall processors
 ## Connecting Instance
 
 ```javascript
-const Novastar = require("./index");
+const Novastar = require("novastar-coex");
 const novastar = new Novastar("10.10.10.45");
 
 //connect to an additional instance
