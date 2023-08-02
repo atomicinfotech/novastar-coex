@@ -104,7 +104,7 @@ module.exports = function (ip) {
       });
   };
 
-  // Adjust color temperature
+  // Adjust gamma
   // gamma 1.0 to 4.0
   // [optional] type 0 = red, 1 = blue, 2 = green, 3 = all.  Default = 3
   // [optional] array of cabinetids
@@ -161,7 +161,7 @@ module.exports = function (ip) {
   this.displaymode = function (value, cb) {
     // 0 = normal
     // 1 = blackout
-    // 2 = freeze?
+    // 2 = freeze
     console.log(ip);
 
     console.log("adjust display mode of the screen", value);
@@ -423,55 +423,55 @@ module.exports = function (ip) {
   this.testpattern = function (value, params, cb) {
 
     switch (value) {
-      case "white":
-        var mode = 0;
-        params = {
-          red: 4095,
-          green: 4095,
-          blue: 4095,
-          gray: 4095,
-        };
-        break;
-      case "black":
-        var mode = 0;
-        params = {
-          red: 0,
-          green: 0,
-          blue: 0,
-          gray: 0,
-        };
-        break;
-      case "red":
-        var mode = 0;
-        params = {
-          red: 255,
-          green: 0,
-          blue: 0,
-          gray: 0,
-          gridWidth: 16,
-          moveSpeed: 0,
-          gradientStretch: 1,
-          state: 1,
-        };
-        break;
-      case "green":
-        var mode = 0;
-        params = {
-          red: 0,
-          green: 4095,
-          blue: 0,
-          gray: 0,
-        };
-        break;
-      case "blue":
-        var mode = 0;
-        params = {
-          red: 0,
-          green: 0,
-          blue: 4095,
-          gray: 0
-        };
-        break;
+      // case "white":
+      //   var mode = 0;
+      //   params = {
+      //     red: 4095,
+      //     green: 4095,
+      //     blue: 4095,
+      //     gray: 4095,
+      //   };
+      //   break;
+      // case "black":
+      //   var mode = 0;
+      //   params = {
+      //     red: 0,
+      //     green: 0,
+      //     blue: 0,
+      //     gray: 0,
+      //   };
+      //   break;
+      // case "red":
+      //   var mode = 0;
+      //   params = {
+      //     red: 255,
+      //     green: 0,
+      //     blue: 0,
+      //     gray: 0,
+      //     gridWidth: 16,
+      //     moveSpeed: 0,
+      //     gradientStretch: 1,
+      //     state: 1,
+      //   };
+      //   break;
+      // case "green":
+      //   var mode = 0;
+      //   params = {
+      //     red: 0,
+      //     green: 4095,
+      //     blue: 0,
+      //     gray: 0,
+      //   };
+      //   break;
+      // case "blue":
+      //   var mode = 0;
+      //   params = {
+      //     red: 0,
+      //     green: 0,
+      //     blue: 4095,
+      //     gray: 0
+      //   };
+      //   break;
       case 0:
       case 16:
       case 17:
