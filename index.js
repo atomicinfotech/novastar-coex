@@ -501,15 +501,15 @@ module.exports = function (ip) {
 
         if(!params) {
           params = {
-            red: 255,
-            green: 255,
-            blue: 255,
-            gray: 0,
-            gridWidth: 16,
-            moveSpeed: 0,
+            red: 4095,
+            green: 4095,
+            blue: 4095,
+            gray: 255,
+            gridWidth: 255,
+            moveSpeed: 100,
             gradientStretch: 1,
-            state: 1
-          }
+            state: 1,
+          };
         }
 
         mode = value;
