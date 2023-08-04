@@ -238,7 +238,7 @@ module.exports = function (ip) {
       })
       .catch(function (error) {
         console.log(error);
-        if (typeof cb == "function") return cb(false);
+        if (typeof cb == "function") return cb(false, error);
       });
   };
 
