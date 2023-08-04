@@ -399,3 +399,5 @@ novastar.testpattern(16);
 
 2. Setting working mode to 3 (All-In-One) doesn't work.
 
+3. If you are running COEX VMP software, the processor will be locked to only recieve API commands from that device/ip.  Attempting to run API commands from any other device/IP will return a "device locked" error.  Current workaround is to close VMP, or run the commands from the same computer that is running the VMP software client.
+
