@@ -8,6 +8,26 @@ module.exports = function (ip) {
   this.baseurl = "http://" + this.ip + ":" + this.port + "/api/v1/device/";
   this.cache = {};
 
+  var responseparser = function (response, callback, path) {
+    data = _.get(response, "data");
+    //we have an error
+    if (data.code) {
+      var error = {
+        error : data.message
+      };
+
+      if ((error.error = "device locked")) error.note = "VMP is likely on another device. Either close VMP or run Companion on the same machine & IP address.";
+
+      if (typeof callback == "function") return callback(false, error);
+      return;
+    }
+
+    if (path) response = _.get(response, path); // return part of the response
+
+    if (typeof callback == "function") return callback(response);
+
+  }
+
   //syntax sugar for diplay modes
   this.blackout = function (cb) {
     console.log("blackout the screen");
@@ -27,10 +47,13 @@ module.exports = function (ip) {
   // can also take a list of cabinet ids
   // PUT /api/v1/device/cabinet/brightness
   this.brightness = function (brightness, cabinetids, cb) {
-    //TODO see if cabinet ids is actually a callback
+    if (typeof cabinetids == "function") {
+      cb = cabinetids;
+      cabinetids = null;
+    }
 
     //if no cabinet value is provided send 16777215 which will adjust all
-    if (!cabinetids) cabinetids = [16777215];
+    if(!cabinetids) cabinetids = [16777215];
 
     if (brightness > 1) brightness = brightness / 100; // most likely is a percentage
     console.log("adjust brightness of the screen ", brightness);
@@ -47,14 +70,7 @@ module.exports = function (ip) {
     axios
       .put(url, payload)
       .then(function (response) {
-        data = _.get(response, "data");
-        if (data.code) {
-          console.log(data.message);
-          if (typeof cb == "function") return cb(false, data.message);
-          return;
-        }
-        console.log(response);
-        if (typeof cb == "function") return cb(response);
+        responseparser(response, cb);
       })
       .catch(function (error) {
         console.log(error);
@@ -69,6 +85,11 @@ module.exports = function (ip) {
   // [optional] callback function
   // PUT /api/v1/device/cabinet/colortemperature
   this.colortemperature = function (value, cabinetids, cb) {
+     if (typeof cabinetids == "function") {
+       cb = cabinetids;
+       cabinetids = null;
+     }
+
     //if no cabinet value is provided send 16777215 which will adjust all
     if (!cabinetids) cabinetids = [16777215];
 
@@ -105,7 +126,7 @@ module.exports = function (ip) {
     axios
       .put(url, payload)
       .then(function (response) {
-        if (typeof cb == "function") return cb(response);
+        responseparser(response, cb);
       })
       .catch(function (error) {
         console.log(error);
@@ -120,6 +141,17 @@ module.exports = function (ip) {
   // [optional] callback function
   // PUT /api/v1/device/cabinet/colortemperature
   this.gamma = function (value, type, cabinetids, cb) {
+
+    if (typeof cabinetids == "function") {
+      cb = cabinetids;
+      cabinetids = null;
+    }
+
+    if (typeof type == "function") {
+      cb = type;
+      type = null;
+    }
+
     //if no cabinet value is provided send 16777215 which will adjust all
     if (!cabinetids) cabinetids = [16777215];
 
@@ -158,7 +190,7 @@ module.exports = function (ip) {
     axios
       .put(url, payload)
       .then(function (response) {
-        if (typeof cb == "function") return cb(response);
+        responseparser(response, cb);
       })
       .catch(function (error) {
         console.log(error);
@@ -181,7 +213,7 @@ module.exports = function (ip) {
     axios
       .put(url, { value: value })
       .then(function (response) {
-        if (typeof cb == "function") return cb(response);
+        responseparser(response, cb);
       })
       .catch(function (error) {
         console.log(error);
@@ -195,13 +227,12 @@ module.exports = function (ip) {
     console.log("Get list of attached cabinets");
     var url = this.baseurl + "cabinet";
 
-    console.log(url);
+    //console.log(url);
 
     axios
       .get(url, { value: 0 })
       .then(function (response) {
-        data = _.get(response, "data.data");
-        if (typeof cb == "function") return cb(data);
+        responseparser(response, cb, "data.data");
       })
       .catch(function (error) {
         console.log(error);
@@ -226,15 +257,22 @@ module.exports = function (ip) {
     axios
       .get(url, { value: 0 })
       .then(function (response) {
-        var data = _.get(response, "data.data");
 
-        data = _.map(data, function (d) {
-          d.supportFrameRate = _.split(d.supportFrameRate, "|");
-          d.supportResolution = _.split(d.supportResolution, "|");
-          return d;
-        });
+        responseparser(response, function(data, error){
+          if (error) {
+            if (typeof cb == "function") return cb(false, error);
+            return;
+          }
 
-        if (typeof cb == "function") return cb(data);
+          data = _.map(data, function (d) {
+            d.supportFrameRate = _.split(d.supportFrameRate, "|");
+            d.supportResolution = _.split(d.supportResolution, "|");
+            return d;
+          });
+
+          if (typeof cb == "function") return cb(data);
+
+        }, "data.data");        
       })
       .catch(function (error) {
         console.log(error);
@@ -255,7 +293,7 @@ module.exports = function (ip) {
         lookup[source.groupId] = source.groupId;
       });
 
-      console.log(lookup);
+      //console.log(lookup);
 
       var groupId = null;
       groupId = lookup[input];
@@ -271,10 +309,20 @@ module.exports = function (ip) {
       axios
         .put(url, payload)
         .then(function (response) {
-          var data = { input: input, groupId: groupId };
-          console.log(data);
 
-          if (typeof cb == "function") return cb(data);
+          responseparser(
+            response,
+            function (data, error) {
+              if (error) {
+                if (typeof cb == "function") return cb(false, error);
+                return;
+              }
+               var data = { input: input, groupId: groupId };
+              
+              if (typeof cb == "function") return cb(data);
+            },
+            "data.data"
+          );  
         })
         .catch(function (error) {
           console.log(error);
@@ -289,9 +337,7 @@ module.exports = function (ip) {
     axios
       .get(url)
       .then(function (response) {
-        data = _.get(response, "data.data");
-
-        if (typeof cb == "function") return cb(data);
+        responseparser(response, cb, "data.data");
       })
       .catch(function (error) {
         console.log(error);
@@ -327,9 +373,7 @@ module.exports = function (ip) {
       axios
         .put(url, payload)
         .then(function (response) {
-          var data = _.get(response, "data.data");
-
-          if (typeof cb == "function") return cb(data);
+           responseparser(response, cb, "data.data");
         })
         .catch(function (error) {
           console.log(error);
@@ -387,7 +431,7 @@ module.exports = function (ip) {
     axios
       .put(url, { value: value })
       .then(function (response) {
-        if (typeof cb == "function") return cb(response);
+         responseparser(response, cb);
       })
       .catch(function (error) {
         console.log(error);
@@ -533,7 +577,7 @@ module.exports = function (ip) {
     axios
       .put(url, payload)
       .then(function (response) {
-        if (typeof cb == "function") return cb(response);
+        responseparser(response, cb);
       })
       .catch(function (error) {
         console.log(error);
