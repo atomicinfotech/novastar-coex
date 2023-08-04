@@ -16,7 +16,7 @@ novastar2.brightness(50);
 
 ```
 
-## Brightness Instance
+## Brightness
 
 Defaults to all cabinets, but you can pass a list of cabinet ids and a callback function.
 
@@ -35,10 +35,14 @@ novastar.brightness(0);
 
 ## Display Mode
 
-Defaults to all cabinets, but you can pass a list of cabinet ids and a callback function.
+Change the display mode of the processor.
+
+- 0 = Normal
+- 1 = Blackout
+- 2 = Freeze
 
 ```javascript
-novastar.brightness(displaymode, [cb]);
+novastar.displaymode(displaymode, [cb]);
 ```
 
 ```javascript
