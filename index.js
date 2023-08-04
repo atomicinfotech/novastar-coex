@@ -26,7 +26,9 @@ module.exports = function (ip) {
 
   // can also take a list of cabinet ids
   // PUT /api/v1/device/cabinet/brightness
-  this.brightness = function (brightness, cabinetids) {
+  this.brightness = function (brightness, cabinetids, cb) {
+    //TODO see if cabinet ids is actually a callback
+
     //if no cabinet value is provided send 16777215 which will adjust all
     if (!cabinetids) cabinetids = [16777215];
 
@@ -45,11 +47,18 @@ module.exports = function (ip) {
     axios
       .put(url, payload)
       .then(function (response) {
+        data = _.get(response, "data");
+        if (data.code) {
+          console.log(data.message);
+          if (typeof cb == "function") return cb(false, data.message);
+          return;
+        }
+        console.log(response);
         if (typeof cb == "function") return cb(response);
       })
       .catch(function (error) {
         console.log(error);
-        if (typeof cb == "function") return cb(false);
+        if (typeof cb == "function") return cb(false, error);
       });
   };
 
