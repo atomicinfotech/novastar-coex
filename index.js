@@ -301,7 +301,6 @@ module.exports = function (ip) {
 
   //PUT /api/v1/device/currentpreset
   this.preset = function (preset, cb) {
-    console.log(ip);
     console.log("select preset", preset);
 
     var baseurl = this.baseurl;
@@ -313,8 +312,6 @@ module.exports = function (ip) {
         lookup[preset.name] = preset.sequenceNumber;
         lookup[preset.sequenceNumber] = preset.sequenceNumber;
       });
-
-      console.log(lookup);
 
       var sequenceNumber = null;
       sequenceNumber = lookup[preset];
@@ -530,8 +527,8 @@ module.exports = function (ip) {
 
     if (params) payload.parameters = params;
 
-    console.log(url);
-    console.log(payload);
+    // console.log(url);
+    // console.log(payload);
 
     axios
       .put(url, payload)
