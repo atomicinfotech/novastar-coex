@@ -56,7 +56,7 @@ module.exports = function (ip) {
     if(!cabinetids) cabinetids = [16777215];
 
     if (brightness > 1) brightness = brightness / 100; // most likely is a percentage
-    console.log("adjust brightness of the screen ", brightness);
+    console.log("adjust brightness ", brightness);
 
     var url = this.baseurl + "cabinet/brightness";
     var payload = {
@@ -203,7 +203,6 @@ module.exports = function (ip) {
     // 0 = normal
     // 1 = blackout
     // 2 = freeze
-    console.log(ip);
 
     console.log("adjust display mode of the screen", value);
     var url = this.baseurl + "screen/displaymode";
