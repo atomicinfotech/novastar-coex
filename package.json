@@ -1,6 +1,6 @@
 {
   "name": "novastar-coex",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A javascript library for control of NovaStar COEX video wall processors",
   "main": "index.js",
   "scripts": {
